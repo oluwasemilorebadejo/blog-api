@@ -4,10 +4,11 @@
   "description": "",
   "main": "dist/server.js",
   "scripts": {
-    "start": "node dist/server.js",
+    "test": "set NODE_ENV=test && jest --detectOpenHandles",
     "build": "tsc",
-    "dev": "nodemon src/server.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "watch": "tsc --w",
+    "start:prod": "set NODE_ENV=production && node ./dist/server.js",
+    "start": "nodemon --watch src -e ts,json  --exec ts-node ./src/server.ts"
   },
   "author": "",
   "license": "ISC",
