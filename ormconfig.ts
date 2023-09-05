@@ -9,7 +9,7 @@ const config: DataSourceOptions = {
   database: process.env.DATABASE_NAME, // Database name
   entities: ["src/entities/*.ts"], // Entity files path (you'll need to adjust this)
   synchronize: true, // Automatically sync database schema on application start
-  logging: true, // Enable SQL query logging
+  logging: false, // Enable SQL query logging
   ssl: true, // Enable SSL
 };
 
