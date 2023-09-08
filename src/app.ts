@@ -6,7 +6,7 @@ import { AppError } from "./utils/errors";
 import globalErrorHandler from "./middleware/error.middleware";
 
 import authRouter from "./routes/auth.route";
-// import postRouter from "./routes/post.route";
+import postRouter from "./routes/post.route";
 
 const app = express();
 
@@ -22,6 +22,7 @@ app.use(cookieParser());
 
 // routes
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/posts", postRouter);
 
 // route error handler
 app.all("*", (req, res, next) => {

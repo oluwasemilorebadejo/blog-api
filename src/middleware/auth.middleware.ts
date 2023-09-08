@@ -1,10 +1,9 @@
-import { RequestHandler } from "express";
+import { RequestHandler, Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { promisify } from "util";
 import User from "../entities/user.entity"; // Import your User entity
 import { AppError } from "../utils/errors"; // Create an AppError class for custom errors
 
-export interface IUser {
+interface IUser {
   id: string;
   email: string;
   username: string;
@@ -15,8 +14,16 @@ export interface IUser {
   save(): Promise<IUser>;
 }
 
+interface JWTData extends JwtPayload {
+  id: string;
+}
+
 // Create a middleware to protect routes
-export const protect: RequestHandler = async (req, res, next) => {
+export const protect = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   // Get the token and check if it exists
   let token: string | undefined;
   if (
@@ -30,22 +37,28 @@ export const protect: RequestHandler = async (req, res, next) => {
 
   if (!token) {
     return next(
-      new AppError("You are not logged in. Please log in to get access.", 401)
+      new AppError("You aren't logged in. Kindly log in to get access.", 401)
     );
   }
 
   // Verify token
-  const decoded: string | JwtPayload = await jwt.verify(
+  const decoded: string | JwtPayload = jwt.verify(
     token,
     process.env.JWT_SECRET!
   );
 
   const userId = (decoded as IUser).id;
 
-  // Check if the user still exists
-  const currentUser = await User.findOne({ where: { id: userId } });
+  // Check if user still exists
+  const currentUser = await User.findOneBy({ id: userId });
+  if (!currentUser) {
+    return next(
+      new AppError("The user with this token no longer exists.", 401)
+    );
+  }
 
   // Grant access to protected route
+  req.body.user = currentUser; // req.body.user stores the user data and is only available on protected routes
   res.locals.user = currentUser;
 
   next();
