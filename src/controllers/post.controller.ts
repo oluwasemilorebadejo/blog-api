@@ -86,12 +86,53 @@ export const deletePost = catchAsync(
     });
   }
 );
+
 export const getAllPosts = catchAsync(async (req: Request, res: Response) => {
-  const posts = await Post.find();
+  // Pagination
+  const page = parseInt(req.query.page as string) || 1;
+  const pageSize = parseInt(req.query.pageSize as string) || 10;
+  const skip = (page - 1) * pageSize;
+
+  // Filtering
+  const titleFilter = (req.query.titleFilter as string) || ""; // Filter by title
+
+  // Sorting
+  let sortOrder: "ASC" | "DESC" | undefined = undefined; // Default is undefined
+  const sortOrderParam = req.query.sortOrder as string;
+  if (sortOrderParam === "asc" || sortOrderParam === "desc") {
+    sortOrder = sortOrderParam.toUpperCase() as "ASC" | "DESC";
+  }
+
+  const sortField = (req.query.sortField as string) || "created_at"; // Sort by title by default
+
+  // Field limiting
+  let selectedFields: string[] | undefined;
+  const fieldsParam = req.query.fields as string;
+
+  console.log(fieldsParam);
+
+  if (fieldsParam) {
+    selectedFields = fieldsParam.split(",");
+  }
+
+  // Build the query
+  const queryBuilder = Post.createQueryBuilder("post")
+    .where("post.title LIKE :titleFilter", { titleFilter: `%${titleFilter}%` })
+    .orderBy(`post.${sortField}`, sortOrder)
+    .skip(skip)
+    .take(pageSize);
+
+  // Select specific fields if specified
+  if (selectedFields) {
+    queryBuilder.select(selectedFields);
+  }
+
+  // Execute the query
+  const posts = await queryBuilder.getMany();
 
   return res.status(200).json({
     status: "success",
-    posts: posts.length,
+    results: posts.length,
     data: {
       posts,
     },
