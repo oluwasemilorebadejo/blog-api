@@ -109,8 +109,6 @@ export const getAllPosts = catchAsync(async (req: Request, res: Response) => {
   let selectedFields: string[] | undefined;
   const fieldsParam = req.query.fields as string;
 
-  console.log(fieldsParam);
-
   if (fieldsParam) {
     selectedFields = fieldsParam.split(",");
   }
@@ -124,7 +122,7 @@ export const getAllPosts = catchAsync(async (req: Request, res: Response) => {
 
   // Select specific fields if specified
   if (selectedFields) {
-    queryBuilder.select(selectedFields);
+    queryBuilder.select(selectedFields.map((field) => `post.${field}`));
   }
 
   // Execute the query
