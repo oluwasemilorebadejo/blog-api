@@ -13,4 +13,4 @@ const config: DataSourceOptions = {
   ssl: true, // Enable SSL
 };
 
-export default config;
+export = config;
