@@ -2,12 +2,12 @@
   "name": "typescript-template",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/server.js",
+  "main": "src/server.ts",
   "scripts": {
     "test": "set NODE_ENV=test && jest --detectOpenHandles",
     "build": "tsc",
     "watch": "tsc --w",
-    "start:prod": "node ../dist/server.js",
+    "start:prod": "node ./dist/src/server.js",
     "start": "nodemon --watch src -e ts,json  --exec ts-node ./src/server.ts"
   },
   "author": "",
