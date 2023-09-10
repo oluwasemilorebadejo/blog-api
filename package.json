@@ -7,7 +7,7 @@
     "test": "set NODE_ENV=test && jest --detectOpenHandles",
     "build": "tsc",
     "watch": "tsc --w",
-    "start:prod": "set NODE_ENV=production && node dist/server.js",
+    "start:prod": "set NODE_ENV=production && node dist/server.ts",
     "start": "nodemon --watch src -e ts,json  --exec ts-node ./src/server.ts"
   },
   "author": "",
